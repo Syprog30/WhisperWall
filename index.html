@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WhisperWall</title>
-    
     <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 </head>
 <body>
 
     <header>
         <h1>WHISPER WALL</h1>
         <p class="subtitle">Confess anonymously.</p>
-        
+
         <label class="toggle-switch">
             <input type="checkbox" id="themeCheckbox">
             <div class="toggle-track">
@@ -26,12 +26,16 @@
 
     <div class="input-wrapper">
         <div id="replyBar">
-            <span>Replying to <b id="replyTargetName">Anonymous</b></span>
-            <span style="cursor:pointer; font-weight:bold; margin-left: 10px;" id="cancelReplyBtn">✕</span>
+            <div style="display:flex; align-items:center; overflow:hidden;">
+                <span style="margin-right: 5px; color: var(--accent);">Replying to:</span>
+                <img id="replyMediaPreview" class="reply-thumb">
+                <span id="replyTargetName" style="font-weight:bold; font-size: 0.9em;">...</span>
+            </div>
+            <span style="cursor:pointer; font-weight:bold; margin-left: 10px; color: #ef4444;" id="cancelReplyBtn">✕</span>
         </div>
 
         <textarea id="confessionText" placeholder="What is your secret?"></textarea>
-        
+
         <div id="previewContainer">
             <span style="color: var(--text-dim); margin-right: 10px;">Attached:</span>
             <img id="previewImg" class="preview-thumb" style="display:none">
@@ -41,16 +45,10 @@
 
         <div class="action-row">
             <input type="file" id="fileInput" accept="image/*,video/*" style="display:none">
-            
             <button class="btn-icon" id="uploadBtn" title="Upload Media">
-                <svg class="plus-icon-svg" viewBox="0 0 24 24">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+                <svg class="plus-icon-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
-            
             <button class="btn-icon" id="tenorBtn" title="Add GIF">☺</button>
-            
             <button class="btn-post" id="postBtn">
                 <span id="btnText">Post Secret</span>
                 <div class="uploading-spinner" id="btnSpinner"></div>
@@ -69,13 +67,60 @@
     </div>
 
     <div id="feed">
-        <p style="text-align:center; color: var(--text-dim); margin-top: 20px;">Connecting to Server...</p>
+        <p style="text-align:center; color: var(--text-dim); margin-top: 20px;">Connecting...</p>
     </div>
 
     <footer>
         <div style="margin-bottom: 10px;">&copy; <span id="year"></span> Synz</div>
-        <div onclick="adminClear()" style="font-size: 0.75rem; cursor:pointer;">Admin Panel</div>
     </footer>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">✕</span>
+        <img id="lightboxImg">
+        <video id="lightboxVid" controls></video>
+    </div>
+
+    <div id="emojiBottomSheet" class="bottom-sheet-overlay">
+        <div class="sheet-content">
+            
+            <div class="sheet-handle"></div>
+
+            <div id="pickerHeader" class="sheet-header">
+                <div class="search-container">
+                    <div class="search-bar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="pickerSearch" placeholder="Search">
+                    </div>
+                </div>
+                <div class="section-row">
+                    <span class="section-title">Your reactions</span>
+                    <span class="customize-link" onclick="enterCustomizeMode()">CUSTOMIZE</span>
+                </div>
+            </div>
+
+            <div id="customizeHeader" class="sheet-header" style="display:none;">
+                <div class="customize-top-bar">
+                    <button class="icon-btn" onclick="exitCustomizeMode()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </button>
+                    <span style="font-weight:bold; font-size:1.1rem;">Customize reactions</span>
+                    <button class="icon-btn" onclick="saveAndExitCustomize()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                </div>
+                <div class="customize-info">
+                    Tap a reaction, then choose an emoji to replace it.<br>
+                    <span style="opacity:0.6; font-size:0.85rem;">❤️ is your double-tap reaction.</span>
+                </div>
+            </div>
+
+            <div id="quickReactionsGrid" class="quick-reactions-row">
+                </div>
+
+            <emoji-picker class="dark"></emoji-picker>
+
+        </div>
+    </div>
 
     <script type="module" src="main.js"></script>
 </body>
