@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhisperWall</title>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>WHISPER WALL</h1>
+        <p class="subtitle">Confess anonymously.</p>
+        
+        <label class="toggle-switch">
+            <input type="checkbox" id="themeCheckbox">
+            <div class="toggle-track">
+                <div class="toggle-thumb">
+                    <svg class="toggle-icon icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="toggle-icon icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </div>
+            </div>
+        </label>
+    </header>
+
+    <div class="input-wrapper">
+        <div id="replyBar">
+            <span>Replying to <b id="replyTargetName">Anonymous</b></span>
+            <span style="cursor:pointer; font-weight:bold; margin-left: 10px;" id="cancelReplyBtn">✕</span>
+        </div>
+
+        <textarea id="confessionText" placeholder="What is your secret?"></textarea>
+        
+        <div id="previewContainer">
+            <span style="color: var(--text-dim); margin-right: 10px;">Attached:</span>
+            <img id="previewImg" class="preview-thumb" style="display:none">
+            <video id="previewVid" class="preview-video" style="display:none" muted></video>
+            <span style="cursor:pointer; color: #ef4444; font-weight:bold; margin-left: auto;" id="clearBtn">✕</span>
+        </div>
+
+        <div class="action-row">
+            <input type="file" id="fileInput" accept="image/*,video/*" style="display:none">
+            
+            <button class="btn-icon" id="uploadBtn" title="Upload Media">
+                <svg class="plus-icon-svg" viewBox="0 0 24 24">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+            
+            <button class="btn-icon" id="tenorBtn" title="Add GIF">☺</button>
+            
+            <button class="btn-post" id="postBtn">
+                <span id="btnText">Post Secret</span>
+                <div class="uploading-spinner" id="btnSpinner"></div>
+            </button>
+        </div>
+
+        <div id="tenorDrawer">
+            <div class="tab-row">
+                <div class="tab-btn active" id="tabGif" onclick="switchTab('gif')">GIFs</div>
+                <div class="tab-btn" id="tabSticker" onclick="switchTab('sticker')">Stickers</div>
+            </div>
+            <input type="text" id="tenorSearch" placeholder="Search Tenor (e.g. cat)...">
+            <div class="loader" id="tenorLoader"></div>
+            <div id="tenorGrid"></div>
+        </div>
+    </div>
+
+    <div id="feed">
+        <p style="text-align:center; color: var(--text-dim); margin-top: 20px;">Connecting to Server...</p>
+    </div>
+
+    <footer>
+        <div style="margin-bottom: 10px;">&copy; <span id="year"></span> Synz</div>
+        <div onclick="adminClear()" style="font-size: 0.75rem; cursor:pointer;">Admin Panel</div>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

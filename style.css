@@ -1,0 +1,81 @@
+/* setting up variables so i don't have to change colors everywhere later */
+:root { --bg: #0f172a; --card-bg: #1e293b; --text-main: #e2e8f0; --text-dim: #94a3b8; --accent: #8b5cf6; --my-color: #10b981; --input-bg: #0f172a; --border: #334155; }
+
+/* light mode overrides... hopefully this works */
+body.light-mode { --bg: #f1f5f9; --card-bg: #ffffff; --text-main: #1e293b; --text-dim: #64748b; --accent: #6366f1; --input-bg: #f8fafc; --border: #e2e8f0; }
+
+body { background-color: var(--bg); color: var(--text-main); font-family: sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: 0.3s; overflow-x: hidden; }
+
+header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 500px; position: relative; }
+h1 { margin: 0; font-weight: 300; letter-spacing: 2px; margin-top: 10px; }
+.subtitle { color: var(--text-dim); font-size: 0.9rem; margin-top: 5px; }
+
+/* --- THE SWITCH THING (top right) --- */
+/* honestly just copy pasted this part from a tutorial */
+.toggle-switch { position: absolute; top: 0; right: 0; width: 70px; height: 36px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.toggle-switch input { display: none; }
+.toggle-track { width: 100%; height: 100%; background-color: #000; border-radius: 40px; position: relative; transition: background-color 0.4s ease; display: flex; align-items: center; border: 1px solid var(--border); box-sizing: border-box; }
+.toggle-thumb { width: 30px; height: 30px; background-color: #fff; border-radius: 50%; position: absolute; left: 2px; transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+.toggle-icon { width: 16px; height: 16px; position: absolute; transition: opacity 0.4s ease, transform 0.4s ease; stroke: #000; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* rotations for sun/moon */
+.icon-moon { opacity: 1; transform: rotate(0); }
+.icon-sun { opacity: 0; transform: rotate(-90deg); }
+.toggle-switch input:checked + .toggle-track { background-color: #e2e8f0; } 
+.toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(34px); }
+.toggle-switch input:checked + .toggle-track .icon-moon { opacity: 0; transform: rotate(90deg); }
+.toggle-switch input:checked + .toggle-track .icon-sun { opacity: 1; transform: rotate(0); }
+
+/* --- MAIN STYLES --- */
+.input-wrapper { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 100%; max-width: 500px; margin-bottom: 30px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+textarea { width: 100%; height: 80px; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 8px; resize: none; box-sizing: border-box; font-family: inherit; margin-bottom: 10px; outline: none; }
+
+.action-row { display: flex; gap: 10px; align-items: center; }
+button { border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.btn-post { background-color: var(--accent); color: white; flex-grow: 1; height: 45px;}
+.btn-icon { background-color: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); width: 45px; height: 45px; font-size: 1.5rem; padding: 0; display:flex; align-items:center; justify-content:center; transition: 0.2s; }
+.btn-icon:hover { background-color: rgba(255,255,255,0.05); }
+
+/* SVG icon styling */
+.plus-icon-svg { width: 24px; height: 24px; stroke: var(--text-main); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: 0.2s; }
+.btn-icon:hover .plus-icon-svg { stroke: var(--accent); }
+
+/* loading spinner animation thingy */
+.uploading-spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; margin: 0 auto; }
+
+/* GIF drawer styles */
+#tenorDrawer { display: none; flex-direction: column; gap: 10px; margin-top: 15px; background: var(--input-bg); padding: 10px; border-radius: 8px; height: 350px; }
+#tenorSearch { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); outline: none; box-sizing: border-box; }
+.tab-row { display: flex; gap: 5px; margin-bottom: 5px; }
+.tab-btn { flex: 1; padding: 5px; background: var(--card-bg); border: 1px solid var(--border); color: var(--text-dim); border-radius: 4px; font-size: 0.8rem; cursor: pointer; text-align: center; }
+.tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+#tenorGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; overflow-y: auto; height: 100%; }
+.tenor-item { width: 100%; height: 80px; object-fit: cover; cursor: pointer; border-radius: 4px; background: var(--card-bg); }
+
+/* spinner for the gifs */
+.loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin: 20px auto; display: none; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+#previewContainer { display: none; margin-bottom: 10px; align-items: center; background: var(--input-bg); padding: 8px; border-radius: 6px; }
+.preview-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right:10px; }
+.preview-video { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right:10px; background:#000; }
+
+/* --- REPLY STUFF --- */
+#replyBar { display: none; align-items: center; background: rgba(139, 92, 246, 0.1); border-left: 3px solid var(--accent); padding: 8px; margin-bottom: 10px; border-radius: 4px; font-size: 0.85rem; color: var(--text-dim); justify-content: space-between; }
+.reply-quote { margin-bottom: 8px; padding: 5px 10px; border-left: 2px solid var(--text-dim); background: rgba(255,255,255,0.05); color: var(--text-dim); font-size: 0.8rem; border-radius: 0 4px 4px 0; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* FEED STYLES */
+#feed { width: 100%; max-width: 500px; padding-bottom: 40px; }
+.card { background: var(--card-bg); padding: 20px; margin-bottom: 15px; border-radius: 12px; border-left: 4px solid var(--accent); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); touch-action: pan-y; user-select: none; }
+.card.mine { border-left: 4px solid var(--my-color); }
+.meta { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px; }
+.posted-media { width: 100%; max-width: 100%; display: block; margin-top: 10px; border-radius: 8px; }
+
+/* emoji reactions popup */
+.reaction-popup { position: absolute; top: -50px; left: 50%; transform: translateX(-50%) scale(0); background: #fff; padding: 8px 15px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; gap: 15px; z-index: 100; transition: transform 0.2s; pointer-events: none; }
+.reaction-popup.visible { transform: translateX(-50%) scale(1); pointer-events: auto; }
+.reaction-popup::after { content: ""; position: absolute; bottom: -5px; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #fff transparent transparent transparent; }
+.emoji-btn { font-size: 1.8rem; cursor: pointer; }
+.reaction-display { position: absolute; bottom: -10px; right: 15px; background: #334155; color: #fff; border-radius: 20px; padding: 4px 8px; font-size: 0.8rem; display: flex; gap: 5px; border: 2px solid var(--bg); display: none; }
+
+footer { margin-top: 50px; text-align: center; padding-bottom: 20px; color: var(--text-dim); }
