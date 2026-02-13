@@ -1,14 +1,8 @@
 :root { --bg: #0f172a; --card-bg: #1e293b; --text-main: #e2e8f0; --text-dim: #94a3b8; --accent: #8b5cf6; --my-color: #10b981; --input-bg: #0f172a; --border: #334155; }
 body.light-mode { --bg: #f1f5f9; --card-bg: #ffffff; --text-main: #1e293b; --text-dim: #64748b; --accent: #6366f1; --input-bg: #f8fafc; --border: #e2e8f0; }
 
-body { 
-    background-color: var(--bg); color: var(--text-main); font-family: sans-serif; 
-    margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; 
-    min-height: 100vh; transition: 0.3s; overflow-x: hidden; 
-    overscroll-behavior-x: none; 
-}
+body { background-color: var(--bg); color: var(--text-main); font-family: sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: 0.3s; overflow-x: hidden; overscroll-behavior-x: none; }
 
-/* UI COMPONENTS */
 header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 500px; position: relative; padding-top: 50px; }
 h1 { margin: 0; font-weight: 300; letter-spacing: 2px; margin-top: 10px; }
 .subtitle { color: var(--text-dim); font-size: 0.9rem; margin-top: 5px; }
@@ -64,17 +58,12 @@ button { border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-
 #feed { width: 100%; max-width: 500px; padding-bottom: 40px; }
 .card { background: var(--card-bg); padding: 20px; margin-bottom: 15px; border-radius: 12px; border-left: 4px solid var(--accent); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); touch-action: pan-y; user-select: none; }
 .card.mine { border-left: 4px solid var(--my-color); }
-.meta { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px; }
+.meta { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px; display:flex; align-items:center; }
 .posted-media { width: auto; max-width: 100%; max-height: 250px; display: block; margin: 10px 0 0 0; border-radius: 8px; cursor: pointer; transition: opacity 0.2s; }
 .posted-media:active { opacity: 0.8; }
 
 /* REACTION POPUP (Small floaty one) */
-.reaction-popup { 
-    position: absolute; top: -50px; left: 50%; transform: translateX(-50%) scale(0); 
-    background: #fff; padding: 6px 12px; border-radius: 50px; 
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; gap: 8px; 
-    z-index: 100; transition: transform 0.2s; pointer-events: none; width: max-content;
-}
+.reaction-popup { position: absolute; top: -50px; left: 50%; transform: translateX(-50%) scale(0); background: #fff; padding: 6px 12px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; gap: 8px; z-index: 100; transition: transform 0.2s; pointer-events: none; width: max-content; }
 .reaction-popup.visible { transform: translateX(-50%) scale(1); pointer-events: auto; }
 .reaction-popup::after { content: ""; position: absolute; bottom: -5px; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #fff transparent transparent transparent; }
 .emoji-btn { font-size: 1.6rem; cursor: pointer; transition: transform 0.1s; user-select: none; }
@@ -85,72 +74,46 @@ button { border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-
 .plus-btn:hover { background: #cbd5e1; }
 .reaction-display { position: absolute; bottom: -10px; right: 15px; background: #334155; color: #fff; border-radius: 20px; padding: 4px 8px; font-size: 0.8rem; display: flex; gap: 5px; border: 2px solid var(--bg); display: none; }
 
-/* --- BOTTOM SHEET (REPLICA) --- */
-.bottom-sheet-overlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: 2500; align-items: flex-end;
+/* --- MESSAGE OPTIONS BAR --- */
+#msgOptionsBar {
+    position: fixed; bottom: -100px; left: 0; width: 100%;
+    background-color: var(--card-bg); z-index: 2600;
+    display: flex; flex-direction: column; 
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    transition: bottom 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding-bottom: 20px;
 }
-.sheet-content {
-    background-color: #2b2d31; 
-    width: 100%; border-radius: 15px 15px 0 0;
-    padding-bottom: 20px; display: flex; flex-direction: column;
-    height: 70vh; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-    color: #fff;
-}
+#msgOptionsBar.visible { bottom: 0; }
 
+.msg-option {
+    padding: 20px;
+    font-size: 1rem; color: var(--text-main);
+    display: flex; align-items: center; gap: 15px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.msg-option:active { background-color: var(--input-bg); }
+
+/* --- BOTTOM SHEET --- */
+.bottom-sheet-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2500; align-items: flex-end; }
+.sheet-content { background-color: #2b2d31; width: 100%; border-radius: 15px 15px 0 0; padding-bottom: 20px; display: flex; flex-direction: column; height: 70vh; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); color: #fff; }
 .sheet-handle { width: 40px; height: 4px; background: #555; border-radius: 2px; margin: 10px auto; }
-
-/* Header Mode 1: Picker */
 .search-container { padding: 5px 16px 10px 16px; }
-.search-bar { 
-    background: #3e4042; border-radius: 20px; padding: 8px 12px; 
-    display: flex; align-items: center; gap: 8px;
-}
+.search-bar { background: #3e4042; border-radius: 20px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
 .search-bar input { background: transparent; border: none; color: #fff; font-size: 1rem; width: 100%; outline: none; }
 .section-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 16px; }
 .section-title { color: #b5bac1; font-size: 0.9rem; font-weight: 500; }
 .customize-link { color: #3b82f6; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
-
-/* Header Mode 2: Customize */
-.customize-top-bar { 
-    display: flex; justify-content: space-between; align-items: center; 
-    padding: 10px 10px; border-bottom: 1px solid #3f4147; 
-}
+.customize-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 10px; border-bottom: 1px solid #3f4147; }
 .icon-btn { background: none; border: none; cursor: pointer; padding: 5px; }
 .customize-info { padding: 15px 16px; text-align: center; color: #dbdee1; font-size: 0.95rem; line-height: 1.4; }
-
-/* Quick Emoji Grid */
 .quick-reactions-row { display: flex; justify-content: space-between; padding: 10px 16px 15px 16px; margin-bottom: 5px; }
-.quick-slot { 
-    width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-    font-size: 1.8rem; cursor: pointer; border-radius: 50%; transition: 0.2s; user-select: none; 
-}
-
-/* --- THE NEW OPACITY LOGIC --- */
-
-/* 1. When customizing, dim everyone by default */
-.quick-reactions-row.customizing .quick-slot {
-    opacity: 0.35; 
-}
-
-/* 2. But make the selected one BRIGHT and BIGGER */
-.quick-reactions-row.customizing .quick-slot.editing {
-    opacity: 1;
-    transform: scale(1.1);
-    background-color: transparent;
-    border: 2px solid #3b82f6; /* Blue ring */
-}
-
-/* Standard click effect */
+.quick-slot { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; border-radius: 50%; transition: 0.2s; user-select: none; }
+.quick-reactions-row.customizing .quick-slot { opacity: 0.35; }
+.quick-reactions-row.customizing .quick-slot.editing { opacity: 1; transform: scale(1.1); background-color: transparent; border: 2px solid #3b82f6; }
 .quick-slot:active { transform: scale(0.9); }
-
-/* Picker Styling */
-emoji-picker {
-    width: 100%; flex-grow: 1;
-    --background: #2b2d31; --border-color: #3f4147;
-    --input-font-color: #fff; --category-font-color: #b5bac1;
-    --indicator-color: #3b82f6;
-}
+emoji-picker { width: 100%; flex-grow: 1; --background: #2b2d31; --border-color: #3f4147; --input-font-color: #fff; --category-font-color: #b5bac1; --indicator-color: #3b82f6; }
 emoji-picker::part(search-row) { display: none; } 
 
 footer { margin-top: 50px; text-align: center; padding-bottom: 20px; color: var(--text-dim); }
