@@ -12,7 +12,6 @@
     <header>
         <h1>WHISPER WALL</h1>
         <p class="subtitle">Confess anonymously.</p>
-
         <label class="toggle-switch">
             <input type="checkbox" id="themeCheckbox">
             <div class="toggle-track">
@@ -71,7 +70,7 @@
     </div>
 
     <footer>
-        <div style="margin-bottom: 10px;">&copy; <span id="year"></span> Synz</div>
+        <div style="margin-bottom: 15px;">&copy; <span id="year"></span> Synz</div>
     </footer>
 
     <div id="lightbox" onclick="closeLightbox()">
@@ -80,15 +79,20 @@
         <video id="lightboxVid" controls></video>
     </div>
 
+    <div id="msgOptionsBar">
+        <div class="msg-option" id="btnCopyText">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span id="copyTextLabel">Copy</span>
+        </div>
+    </div>
+
     <div id="emojiBottomSheet" class="bottom-sheet-overlay">
         <div class="sheet-content">
-            
             <div class="sheet-handle"></div>
-
             <div id="pickerHeader" class="sheet-header">
                 <div class="search-container">
                     <div class="search-bar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" id="pickerSearch" placeholder="Search">
                     </div>
                 </div>
@@ -97,7 +101,6 @@
                     <span class="customize-link" onclick="enterCustomizeMode()">CUSTOMIZE</span>
                 </div>
             </div>
-
             <div id="customizeHeader" class="sheet-header" style="display:none;">
                 <div class="customize-top-bar">
                     <button class="icon-btn" onclick="exitCustomizeMode()">
@@ -108,17 +111,10 @@
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                     </button>
                 </div>
-                <div class="customize-info">
-                    Tap a reaction, then choose an emoji to replace it.<br>
-                    <span style="opacity:0.6; font-size:0.85rem;">❤️ is your double-tap reaction.</span>
-                </div>
+                <div class="customize-info">Tap a reaction, then choose an emoji to replace it.<br><span style="opacity:0.6; font-size:0.85rem;">❤️ is your double-tap reaction.</span></div>
             </div>
-
-            <div id="quickReactionsGrid" class="quick-reactions-row">
-                </div>
-
+            <div id="quickReactionsGrid" class="quick-reactions-row"></div>
             <emoji-picker class="dark"></emoji-picker>
-
         </div>
     </div>
 
