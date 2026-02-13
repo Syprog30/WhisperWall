@@ -18,7 +18,6 @@ const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/uploa
 const TENOR_KEY = "LIVDSRZULELA"; 
 const TENOR_CLIENT = "WhisperWall";
 
-// INITIAL DEFAULTS
 const DEFAULT_REACTIONS = [
     { key: '0', emoji: '👍' },
     { key: '1', emoji: '❤️' },
@@ -28,14 +27,10 @@ const DEFAULT_REACTIONS = [
     { key: '5', emoji: '😠' }
 ];
 
-// LEGACY MAPPING
-const LEGACY_KEYS = {
-    'like': '👍', 'love': '❤️', 'laugh': '😆', 'wow': '😮', 'sad': '😢', 'angry': '😠'
-};
+const LEGACY_KEYS = { 'like': '👍', 'love': '❤️', 'laugh': '😆', 'wow': '😮', 'sad': '😢', 'angry': '😠' };
 
 let REACTION_MAP = JSON.parse(localStorage.getItem('myReactions')) || DEFAULT_REACTIONS;
 
-// State Variables
 let isCustomizing = false; 
 let editingSlotIndex = 0; 
 let targetDocIdForPicker = null;
@@ -44,8 +39,8 @@ let replyData = null;
 let selectedMediaUrl = null;
 let selectedMediaType = null; 
 let fileToUpload = null; 
+let textToCopy = ""; 
 
-// --- APP INIT ---
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -53,7 +48,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
 let mySecretId = localStorage.getItem("secretUserId") || "user_" + Date.now();
 localStorage.setItem("secretUserId", mySecretId);
 
-// --- THEME ---
 const themeCheckbox = document.getElementById('themeCheckbox');
 if (localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
@@ -72,37 +66,26 @@ themeCheckbox.addEventListener('change', () => {
     }
 });
 
-// --- MAIN PICKER LOGIC ---
 const picker = document.querySelector('emoji-picker');
-
 picker.addEventListener('emoji-click', event => {
     const emoji = event.detail.unicode; 
-    
     if (isCustomizing) {
         tempReactions[editingSlotIndex].emoji = emoji;
         renderQuickSlots(); 
     } else {
-        if(targetDocIdForPicker) {
-            window.react(targetDocIdForPicker, emoji, false);
-        }
+        if(targetDocIdForPicker) window.react(targetDocIdForPicker, emoji, false);
     }
 });
 
 function renderQuickSlots() {
     const container = document.getElementById('quickReactionsGrid');
     container.innerHTML = "";
-    
     const listToRender = isCustomizing ? tempReactions : REACTION_MAP;
-
     listToRender.forEach((r, index) => {
         const div = document.createElement('div');
         div.className = "quick-slot";
         div.textContent = r.emoji;
-        
-        if (isCustomizing && index === editingSlotIndex) {
-            div.classList.add('editing');
-        }
-
+        if (isCustomizing && index === editingSlotIndex) div.classList.add('editing');
         div.onclick = () => {
             if (isCustomizing) {
                 editingSlotIndex = index;
@@ -115,16 +98,12 @@ function renderQuickSlots() {
     });
 }
 
-// --- SHEET MODES ---
 window.openEmojiPicker = (docId) => {
     targetDocIdForPicker = docId;
     isCustomizing = false;
     document.getElementById('pickerHeader').style.display = 'block';
     document.getElementById('customizeHeader').style.display = 'none';
-    
-    // Ensure "customizing" class is OFF
     document.getElementById('quickReactionsGrid').classList.remove('customizing');
-    
     renderQuickSlots();
     document.getElementById('emojiBottomSheet').style.display = 'flex';
 };
@@ -135,10 +114,7 @@ window.enterCustomizeMode = () => {
     tempReactions = JSON.parse(JSON.stringify(REACTION_MAP)); 
     document.getElementById('pickerHeader').style.display = 'none';
     document.getElementById('customizeHeader').style.display = 'block';
-    
-    // Turn ON the dimming effect
     document.getElementById('quickReactionsGrid').classList.add('customizing');
-    
     renderQuickSlots();
 };
 
@@ -146,10 +122,7 @@ window.exitCustomizeMode = () => {
     isCustomizing = false;
     document.getElementById('pickerHeader').style.display = 'block';
     document.getElementById('customizeHeader').style.display = 'none';
-    
-    // Turn OFF the dimming effect
     document.getElementById('quickReactionsGrid').classList.remove('customizing');
-    
     renderQuickSlots(); 
 };
 
@@ -160,8 +133,18 @@ window.saveAndExitCustomize = () => {
 };
 
 window.onclick = (event) => {
+    // Close Emoji Picker if clicking overlay
     if (event.target == document.getElementById('emojiBottomSheet')) {
         document.getElementById('emojiBottomSheet').style.display = "none";
+    }
+    
+    // Close Copy Bar if clicking ANYWHERE else (except the bar itself)
+    const bar = document.getElementById('msgOptionsBar');
+    if (bar.classList.contains('visible') && !event.target.closest('#msgOptionsBar')) {
+        // We also check if they just clicked a card (which opened it), to prevent immediate closing
+        // But since 'startPress' has a timeout, the click event usually fires after.
+        // Simple logic: If they click the background or another element, close it.
+        window.closeMsgOptions();
     }
 };
 
@@ -181,7 +164,6 @@ fileInput.onchange = (e) => {
     resetMedia();
     fileToUpload = file;
     const reader = new FileReader();
-
     if (file.type.startsWith('image/')) {
         reader.onload = (e) => {
             document.getElementById('previewImg').src = e.target.result;
@@ -225,11 +207,9 @@ async function fetchTenor(query) {
         let url = query === "trending" 
             ? `https://g.tenor.com/v1/trending?key=${TENOR_KEY}&client_key=${TENOR_CLIENT}&limit=12&media_filter=minimal`
             : `https://g.tenor.com/v1/search?q=${query}&key=${TENOR_KEY}&client_key=${TENOR_CLIENT}&limit=12&media_filter=minimal`;
-
         const response = await fetch(url);
         const data = await response.json();
         loader.style.display = "none";
-
         if(data.results) {
             data.results.forEach(item => {
                 const previewUrl = item.media[0].tinygif.url;
@@ -279,7 +259,6 @@ function resetMedia() {
     document.getElementById('previewVid').style.display = 'none';
 }
 
-// --- LIGHTBOX ---
 window.openLightbox = (url, type) => {
     const lb = document.getElementById('lightbox');
     const img = document.getElementById('lightboxImg');
@@ -304,27 +283,20 @@ window.closeLightbox = () => {
     document.getElementById('lightboxVid').pause();
 };
 
-
-// --- REPLY LOGIC ---
 window.activateReply = (id, text, mediaUrl, mediaType) => {
     replyData = { id, text, mediaUrl, mediaType };
-    
     const replyBar = document.getElementById('replyBar');
     const targetName = document.getElementById('replyTargetName');
     const mediaPreview = document.getElementById('replyMediaPreview');
-
     replyBar.style.display = 'flex';
-    
     let snippet = text ? (text.substring(0, 20) + (text.length > 20 ? "..." : "")) : "";
     targetName.textContent = snippet;
-
     if (mediaUrl) {
         mediaPreview.src = mediaUrl; 
         mediaPreview.style.display = 'block';
     } else {
         mediaPreview.style.display = 'none';
     }
-
     document.getElementById('confessionText').focus();
     if(navigator.vibrate) navigator.vibrate(50);
 };
@@ -334,40 +306,28 @@ document.getElementById('cancelReplyBtn').onclick = () => {
     document.getElementById('replyBar').style.display = 'none';
 };
 
-// --- POST BUTTON ---
 document.getElementById('postBtn').onclick = async () => {
     const text = document.getElementById('confessionText').value.trim();
     if (!text && !selectedMediaUrl && !fileToUpload) return alert("Write something or attach media!");
-
     const btnText = document.getElementById('btnText');
     const btnSpinner = document.getElementById('btnSpinner');
     const postBtn = document.getElementById('postBtn');
-
     postBtn.disabled = true;
     btnText.style.display = 'none';
     btnSpinner.style.display = 'block';
-
     try {
         let finalMediaUrl = selectedMediaUrl;
         let finalMediaType = selectedMediaType;
-
         if (fileToUpload) {
             const formData = new FormData();
             formData.append('file', fileToUpload);
             formData.append('upload_preset', UPLOAD_PRESET);
-
-            const response = await fetch(CLOUDINARY_URL, {
-                method: 'POST',
-                body: formData
-            });
-
+            const response = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
             if (!response.ok) throw new Error('Upload failed');
             const data = await response.json();
-
             finalMediaUrl = data.secure_url;
             if(data.resource_type === 'video') finalMediaType = 'video';
         }
-
         const payload = {
             content: text,
             mediaUrl: finalMediaUrl || null,
@@ -377,9 +337,7 @@ document.getElementById('postBtn').onclick = async () => {
             timestamp: serverTimestamp(),
             reactions: {} 
         };
-
         REACTION_MAP.forEach(r => payload.reactions[r.emoji] = []);
-
         if(replyData) {
             payload.replyTo = {
                 id: replyData.id,
@@ -387,13 +345,10 @@ document.getElementById('postBtn').onclick = async () => {
                 mediaUrl: replyData.mediaUrl || null 
             };
         }
-
         await addDoc(collection(db, "confessions"), payload);
-
         document.getElementById('confessionText').value = "";
         resetMedia();
         document.getElementById('cancelReplyBtn').click();
-
     } catch (e) { 
         alert("Upload Failed: " + e.message); 
     } finally {
@@ -409,17 +364,14 @@ const q = query(collection(db, "confessions"), orderBy("timestamp", "desc"), lim
 onSnapshot(q, (snapshot) => {
     const feed = document.getElementById('feed');
     feed.innerHTML = "";
-
     if(snapshot.empty) {
         feed.innerHTML = "<p style='text-align:center; color:#777;'>Connected. No secrets yet.</p>";
         return;
     }
-
     snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const docId = docSnap.id;
         const isMine = data.creatorId === mySecretId;
-
         let mediaHtml = "";
         if (data.mediaUrl) {
             if (data.mediaType === 'video') {
@@ -428,15 +380,12 @@ onSnapshot(q, (snapshot) => {
                 mediaHtml = `<img src="${data.mediaUrl}" class="posted-media" onclick="openLightbox('${data.mediaUrl}', 'image')">`;
             }
         }
-
         let displayTime = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "Just now";
-
         let quoteHtml = "";
         if (data.replyTo) {
             let thumb = data.replyTo.mediaUrl ? `<img src="${data.replyTo.mediaUrl}" style="width:20px;height:20px;object-fit:cover;border-radius:3px;vertical-align:middle;margin-right:5px;">` : "";
             quoteHtml = `<div class="reply-quote">↩ ${thumb}${data.replyTo.snippet || ""}</div>`;
         }
-
         let iconsHtml = "";
         if(data.reactions) {
             Object.keys(data.reactions).forEach(key => {
@@ -444,12 +393,10 @@ onSnapshot(q, (snapshot) => {
                 if(count > 0) {
                     let displayChar = key;
                     if(LEGACY_KEYS[key]) displayChar = LEGACY_KEYS[key];
-                    
                     iconsHtml += `<span style="margin-right:4px;">${displayChar}${count}</span>`;
                 }
             });
         }
-
         let buttonsHtml = "";
         REACTION_MAP.forEach(r => {
             const isActive = (data.reactions && data.reactions[r.emoji] && data.reactions[r.emoji].includes(mySecretId));
@@ -460,8 +407,12 @@ onSnapshot(q, (snapshot) => {
         const card = document.createElement('div');
         card.className = `card ${isMine ? 'mine' : ''}`;
 
+        // LONG PRESS LOGIC
         let pressTimer;
-        const startPress = () => pressTimer = setTimeout(() => showMenu(docId), 500);
+        const startPress = () => pressTimer = setTimeout(() => {
+            showMenu(docId);
+            window.showMsgOptions(data.content);
+        }, 500);
         const cancelPress = () => clearTimeout(pressTimer);
         let touchStartX = 0;
         let touchCurrentX = 0;
@@ -478,8 +429,11 @@ onSnapshot(q, (snapshot) => {
             card.style.transform = 'translateX(0)';
             touchStartX = 0; touchCurrentX = 0;
         });
-        
-        card.addEventListener('contextmenu', (e) => { e.preventDefault(); showMenu(docId); });
+        card.addEventListener('contextmenu', (e) => { 
+            e.preventDefault(); 
+            showMenu(docId); 
+            window.showMsgOptions(data.content);
+        });
         card.addEventListener('mousedown', startPress);
         card.addEventListener('mouseup', cancelPress);
 
@@ -495,9 +449,7 @@ onSnapshot(q, (snapshot) => {
         `;
         feed.appendChild(card);
     });
-}, (error) => {
-    console.error(error);
-});
+}, (error) => { console.error(error); });
 
 window.showMenu = (id) => {
     document.querySelectorAll('.reaction-popup').forEach(e => e.classList.remove('visible'));
@@ -505,17 +457,42 @@ window.showMenu = (id) => {
     if(navigator.vibrate) navigator.vibrate(50);
 }
 
+// --- NEW MESSAGE OPTIONS LOGIC ---
+window.showMsgOptions = (text) => {
+    textToCopy = text || ""; 
+    document.getElementById('msgOptionsBar').classList.add('visible');
+    // Reset Label
+    document.getElementById('copyTextLabel').textContent = "Copy";
+}
+
+window.closeMsgOptions = () => {
+    document.getElementById('msgOptionsBar').classList.remove('visible');
+    document.querySelectorAll('.reaction-popup').forEach(e => e.classList.remove('visible'));
+}
+
+document.getElementById('btnCopyText').onclick = () => {
+    if(textToCopy) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // Change text temporarily
+            document.getElementById('copyTextLabel').textContent = "Copied!";
+            // Close after 1.5 seconds
+            setTimeout(() => {
+                window.closeMsgOptions();
+            }, 1500);
+        });
+    } else {
+        window.closeMsgOptions();
+    }
+};
+
 window.react = async (id, emojiChar, hasReacted) => {
     document.getElementById(`popup-${id}`).classList.remove('visible');
     document.getElementById('emojiBottomSheet').style.display = 'none';
+    window.closeMsgOptions(); 
 
     const ref = doc(db, "confessions", id);
     const updates = {};
-    
-    Object.keys(LEGACY_KEYS).forEach(k => {
-         updates[`reactions.${k}`] = arrayRemove(mySecretId);
-    });
-
+    Object.keys(LEGACY_KEYS).forEach(k => { updates[`reactions.${k}`] = arrayRemove(mySecretId); });
     if (hasReacted) {
         updates[`reactions.${emojiChar}`] = arrayRemove(mySecretId);
         await updateDoc(ref, updates);
