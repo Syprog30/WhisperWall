@@ -502,3 +502,11 @@ window.react = async (id, emojiChar, hasReacted) => {
          await updateDoc(ref, updates);
     }
 };
+window.adminClear = async () => {
+            if(prompt("PIN?") === ADMIN_PIN) {
+                const q = query(collection(db, "confessions"));
+                const snap = await getDocs(q);
+                snap.forEach(d => deleteDoc(d.ref));
+                alert("Cleaned!");
+            }
+        };
