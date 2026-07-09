@@ -11,7 +11,7 @@ const firebaseConfig = {
     messagingSenderId: "113276525138",
     appId: "1:113276525138:web:3f5922372049c5c7111d8b"
 };
-
+  const ADMIN_PIN = "1234"; 
 const CLOUD_NAME = "dyqhbiqfb"; 
 const UPLOAD_PRESET = "Upload_default"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`; 
