@@ -116,4 +116,6 @@ button { border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-
 emoji-picker { width: 100%; flex-grow: 1; --background: #2b2d31; --border-color: #3f4147; --input-font-color: #fff; --category-font-color: #b5bac1; --indicator-color: #3b82f6; }
 emoji-picker::part(search-row) { display: none; } 
 
-footer { margin-top: 50px; text-align: center; padding-bottom: 20px; color: var(--text-dim); }
+footer { margin-top: 50px; text-align: center; padding-bottom: 20px; }
+        .copyright { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+        .admin-link { display: block; margin-top: 8px; font-size: 0.75rem; color: #334155; cursor: pointer; text-decoration: none; }
